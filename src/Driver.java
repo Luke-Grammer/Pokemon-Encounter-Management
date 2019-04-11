@@ -1,6 +1,8 @@
 
 import java.util.Scanner;
 
+import ORMexample.PokemonDBClient;;
+
 public class Driver
 {
 	public static void main(String[] args)
@@ -56,7 +58,7 @@ public class Driver
 				} while (true);
 			
 				System.out.println("");
-				pc.displayParty();
+				mgr.displayParty();
 			}
 
 			System.out.println("");

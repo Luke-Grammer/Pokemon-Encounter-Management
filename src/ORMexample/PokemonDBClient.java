@@ -4,7 +4,7 @@ package ORMexample;
 import ORMexample.DBManager;
 import ORMexample.model.DBPokemon;
 
-public class ViewDataBaseQuery {
+public class PokemonDBClient {
 
 	public static void main(String[] args) throws Exception {
 		long ctm1, ctm2;

@@ -5,60 +5,7 @@ import java.util.Scanner;
 
 public class PokemonDBClient
 {
-	public static final String protocol = "jdbc:mariadb://localhost/";
-	public static final String dbName = "PokemonDB"; // Database name
 
-	private Scanner sc;
-	private Connection conn = null;
-	private PreparedStatement stmt = null;
-	private ResultSet rs = null;
-
-	public PokemonDBClient() throws RuntimeException
-	{
-		sc = new Scanner(System.in);
-		try
-		{
-			conn = DriverManager.getConnection(protocol + dbName); // Connect to MariaDB using DriverManager
-			conn.setAutoCommit(false); // Turn off autocommit
-		} catch (SQLException e)
-		{
-			e.printStackTrace();
-			throw new RuntimeException("An unexpected error occured. Attempting to close connection to Pokedex.");
-		}
-	}
-
-	public void close()
-	{
-		if (sc != null)
-			sc.close();
-		
-		try
-		{
-			if (rs != null) rs.close();
-		} catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
-
-		try
-		{
-			if (stmt != null) stmt.close();
-			
-		} catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
-
-		try
-		{
-			if (conn != null) conn.close();
-
-		} catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
-		System.out.println("\nConnection closed.");
-	}
 
 	private ArrayList<String> getParty()
 	{
@@ -255,7 +202,7 @@ public class PokemonDBClient
 		// DEFENSE **************************************************************
 
 		System.out.println("\nParty ranked by resistance to " + input + ":");	
-		ArrayList<ResultPair> pDefenseResult = rankDefense(input);
+		ArrayList<Pair> pDefenseResult = rankDefense(input);
 		
 		if (pDefenseResult == null)
 			return -1;
@@ -270,7 +217,7 @@ public class PokemonDBClient
 		// ATTACK **************************************************************
 
 		System.out.println("\nParty ranked by primary type damage to " + input + ":");	
-		ArrayList<ResultPair> pAttackResult = rankAttack(input, 1);
+		ArrayList<Pair> pAttackResult = rankAttack(input, 1);
 		
 		if (pAttackResult == null)
 			return -1;
@@ -283,7 +230,7 @@ public class PokemonDBClient
 		}
 		
 		System.out.println("\nParty ranked by secondary type damage to " + input + ":");
-		ArrayList<ResultPair> sAttackResult = rankAttack(input, 2);
+		ArrayList<Pair> sAttackResult = rankAttack(input, 2);
 		
 		if (sAttackResult == null)
 			return -1;
@@ -297,10 +244,10 @@ public class PokemonDBClient
 		
 		System.out.println("");
 		
-		ArrayList<ResultPair> rankings = new ArrayList<ResultPair>();
+		ArrayList<Pair> rankings = new ArrayList<Pair>();
 		for (int i = 0; i < pAttackResult.size(); i++)
 		{
-			ResultPair candidate = new ResultPair(pAttackResult.get(i));
+			Pair candidate = new Pair(pAttackResult.get(i));
 			Double rank = 0.0;
 			
 			System.out.println("Candidate: " + candidate.name);
@@ -353,20 +300,20 @@ public class PokemonDBClient
 					break;
 			}
 			
-			rankings.add(new ResultPair(candidate.name, rank));
+			rankings.add(new Pair(candidate.name, rank));
 		}
 		
 		System.out.println("Rankings");
-		for (ResultPair rank : rankings)
+		for (Pair rank : rankings)
 			System.out.println(rank.name + " " + rank.modifier);
 		System.out.println("The best match for " + input + " in your party is " + Collections.min(rankings).name + "\n");
 		
 		return 0;
 	}
 	
-	public ArrayList<ResultPair> rankDefense(String input)
+	public ArrayList<Pair> rankDefense(String input)
 	{
-		ArrayList<ResultPair> results = new ArrayList<ResultPair>();
+		ArrayList<Pair> results = new ArrayList<Pair>();
 		
 		try
 		{
@@ -390,7 +337,7 @@ public class PokemonDBClient
 			rs.beforeFirst();
 			while(rs.next()) // Loop through all result rows
 			{
-				results.add(new ResultPair(rs.getString(1), rs.getDouble(2)));
+				results.add(new Pair(rs.getString(1), rs.getDouble(2)));
 			}
 
 			Collections.sort(results);
@@ -404,11 +351,11 @@ public class PokemonDBClient
 		return results;
 	}
 
-	public ArrayList<ResultPair> rankAttack(String input, int type)
+	public ArrayList<Pair> rankAttack(String input, int type)
 	{
 		PreparedStatement stmt2 = null;
 		ArrayList<String> party = getParty();
-		ArrayList<ResultPair> results = new ArrayList<ResultPair>();
+		ArrayList<Pair> results = new ArrayList<Pair>();
 
 		if (type != 1 && type != 2)
 		{
@@ -443,7 +390,7 @@ public class PokemonDBClient
 				}
 
 				if (rs.getDouble(1) > 0)
-					results.add(new ResultPair(party.get(i), rs.getDouble(1)));
+					results.add(new Pair(party.get(i), rs.getDouble(1)));
 			}
 
 			Collections.sort(results, Collections.reverseOrder());
