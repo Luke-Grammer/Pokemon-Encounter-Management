@@ -1,4 +1,4 @@
-package ORMexample.model;
+package pokemonDB.model;
 
 import java.io.Serializable;
 
@@ -9,7 +9,7 @@ import org.bson.Document;
  * 
  * @author luke grammer
  */
-public class DBPokemon implements Serializable {
+public class Pokemon implements Serializable {
 
 	private static final long serialVersionUID = 3338124225388353508L;
 	
@@ -29,10 +29,12 @@ public class DBPokemon implements Serializable {
      * @param d is the document in the database 
      *        corresponding to the object.
      */
-    public DBPokemon(Integer number, String name, String type1, Document d) {
+    public Pokemon(Integer number, String name, String type1, Document d) {
+    	assert number > 0 : "Invalid pokedex number";
+    	
         this.number = number;
-        this.name = name;
-        this.type1 = type1;
+        this.name = name.toLowerCase().trim();
+        this.type1 = type1.toLowerCase().trim();
         this.type2 = null;
         this.doc = d;
     }
@@ -48,11 +50,16 @@ public class DBPokemon implements Serializable {
      * @param d is the document in the database 
      *        corresponding to the object.
      */
-    public DBPokemon(Integer number, String name, String type1, String type2, Document d) {
+    public Pokemon(Integer number, String name, String type1, String type2, Document d) {
+    	assert number > 0 : "Invalid pokedex number";
+    	
         this.number = number;
-        this.name = name;
-        this.type1 = type1;
-        this.type2 = type2;
+        this.name = name.toLowerCase().trim();
+        this.type1 = type1.toLowerCase().trim();
+        if (type2 != null)
+        {
+        	this.type2 = type2.toLowerCase().trim();
+        }
         this.doc = d;
     }
 
@@ -67,33 +74,36 @@ public class DBPokemon implements Serializable {
 	}
 	
 	/**
-	 * Retrieves this pokemon's name.
+	 * Retrieves this pokemon's name 
+	 * (capitalizes first letter).
 	 * 
 	 * @return the name of this pokemon.
 	 */
 	public String getName()
 	{
-		return name;
+		return name.substring(0, 1).toUpperCase() + name.substring(1);
 	}
 
 	/**
-	 * Retrieves this pokemon's primary type.
+	 * Retrieves this pokemon's primary type 
+	 * (capitalizes first letter).
 	 * 
 	 * @return the primary type of this pokemon.
 	 */
 	public String getPrimaryType()
 	{
-		return type1;
+		return type1.substring(0, 1).toUpperCase() + type1.substring(1);
 	}
 
 	/**
-	 * Retrieves this pokemon's secondary type.
+	 * Retrieves this pokemon's secondary type 
+	 * (capitalizes first letter).
 	 * 
 	 * @return the secondary type of this pokemon.
 	 */
 	public String getSecondaryType()
 	{
-		return type2;
+		return type2.substring(0, 1).toUpperCase() + type2.substring(1);
 	}
 	
 	/**

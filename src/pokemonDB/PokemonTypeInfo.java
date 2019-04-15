@@ -1,3 +1,4 @@
+package pokemonDB;
 /**
  * Represents pokemon type information and 
  * attack/defense type modifiers 

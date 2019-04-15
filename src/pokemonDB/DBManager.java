@@ -1,4 +1,4 @@
-package ORMexample;
+package pokemonDB;
 
 import java.util.Collection;
 import java.util.logging.Level;
@@ -10,8 +10,11 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import ORMexample.daoimpl.PokemonDaoImpl;
-import ORMexample.model.DBPokemon;
+
+import pokemonDB.daoimpl.PartyDaoImpl;
+import pokemonDB.daoimpl.PokemonDaoImpl;
+import pokemonDB.model.Party;
+import pokemonDB.model.Pokemon;
 
 public class DBManager {
 	public static final String DATABASE = "PokemonDB";
@@ -19,6 +22,7 @@ public class DBManager {
 	public static final int PORT = 27017; 
 	
 	private PokemonDaoImpl pkmDao = null;
+	private PartyDaoImpl partyDao = null;
 	private MongoClient mongoClient = null;
 	private MongoDatabase database = null;
 	private static DBManager DBmgr = null;
@@ -35,6 +39,7 @@ public class DBManager {
 			if(database!=null) {
 				System.out.println("Connect to testdb Database Successful");
 				pkmDao = new PokemonDaoImpl(database);
+				partyDao = new PartyDaoImpl(database);
 			}
 			else System.out.println("Database NOT found!");
 		} catch (MongoException e) {
@@ -58,11 +63,31 @@ public class DBManager {
 		return DBmgr;
 	}
 
-	public DBPokemon findPokemon(String name) {
+	public Pokemon findPokemon(String name) {
 		return pkmDao.findPokemon(name);
 	}
 	
-	public Collection<DBPokemon> findPokemon() {
+	public Collection<Pokemon> findPokemon() {
 		return pkmDao.findAllPokemon();
+	}
+	
+	public Party getParty() 
+	{
+		return partyDao.getParty();
+	}
+	
+	public Party replaceParty(String ... pokemon)
+	{
+		return partyDao.replaceParty(pokemon);
+	}
+	
+	public Party addMember(String name)
+	{
+		return partyDao.addMember(name);
+	}
+	
+	public Party removeMember(String name)
+	{
+		return partyDao.removeMember(name);
 	}
 }
