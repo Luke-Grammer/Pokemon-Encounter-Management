@@ -23,9 +23,10 @@ public class PokemonDaoImpl implements PokemonDao {
     {
     	database = db;
     	coll = database.getCollection("pokemon");
-        if(coll != null)
-        	System.out.println("Select pokemon successful"); //should throw an exception
-        else System.out.println("pokemon NOT found!");
+        if(coll == null) 
+        {
+            // TODO: Throw exception (pokemon collection DNE)
+        }
         pokemon = null;	//load games from real database as needed
     }
 

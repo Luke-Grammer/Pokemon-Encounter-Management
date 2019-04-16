@@ -103,7 +103,10 @@ public class Pokemon implements Serializable {
 	 */
 	public String getSecondaryType()
 	{
-		return type2.substring(0, 1).toUpperCase() + type2.substring(1);
+		if (type2 != null)
+			return type2.substring(0, 1).toUpperCase() + type2.substring(1);
+		else 
+			return null;
 	}
 	
 	/**

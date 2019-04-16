@@ -1,4 +1,10 @@
 package pokemonDB;
+
+import java.util.ArrayList;
+import java.util.Collections;
+
+import pokemonDB.model.Pokemon;
+
 /**
  * Represents pokemon type information and 
  * attack/defense type modifiers 
@@ -41,25 +47,14 @@ public class PokemonTypeInfo
 		{1.0, 2.0, 1.0, 0.5, 1.0, 1.0, 1.0, 1.0, 0.5, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 1.0}, // FAIRY
 	};
 	
-	/**
-	 * Returns the attack modifier of attacker pokemon
-	 * type against the defender pokemon type as a Double.
-	 * 
-	 * @param attackerType is the attacking pokemon's type as a String
-	 * @param defenderType is the defending pokemon's type as a String
-	 * @return the attack modifier of attacker vs defender
-	 * @throws IllegalArgumentException when the attacker or defender type is unrecognized
-	 */
-	public static Double getAttackModifier(String attackerType, String defenderType) throws IllegalArgumentException
+	public static Double getAttackModifier(Pokemon attacker, Pokemon defender, boolean primary)
 	{
-		try 
-		{
-			return getAttackModifier(attackerType, defenderType, null);
-		}
-		catch(IllegalArgumentException e)
-		{
-			throw e;
-		}
+		String attackerType = (primary) ? attacker.getPrimaryType() : attacker.getSecondaryType();
+		
+		String defenderPrimaryType = defender.getPrimaryType();
+		String defenderSecondaryType = defender.getSecondaryType();
+		
+		return PokemonTypeInfo.getAttackModifier(attackerType, defenderPrimaryType, defenderSecondaryType);
 	}
 	
 	/**
@@ -70,30 +65,70 @@ public class PokemonTypeInfo
 	 * @param defenderType1 is the defending pokemon's primary type as a String
 	 * @param defenderType2 is the defensing pokemon's secondary type as a String
 	 * @return the attack modifier of attacker vs defender
-	 * @throws IllegalArgumentException when the attacker or defender type is unrecognized
+	 * @throws IllegalArgumentException when the attacker or defender type is non-null but unrecognized
 	 */
 	public static Double getAttackModifier(String attackerType, String defenderType1, String defenderType2) throws IllegalArgumentException
 	{
 		Double d;
 		try 
 		{
-			if (defenderType2 != null)
+			if (attackerType != null)
 			{
-				d = typeInfo[TYPES.valueOf(attackerType.toUpperCase().trim()).ordinal()]
-							[TYPES.valueOf(defenderType1.toUpperCase().trim()).ordinal()]
-				  * typeInfo[TYPES.valueOf(attackerType.toUpperCase().trim()).ordinal()]
-						  	[TYPES.valueOf(defenderType2.toUpperCase().trim()).ordinal()];
+				if (defenderType2 != null)
+				{
+					d = typeInfo[TYPES.valueOf(attackerType.toUpperCase().trim()).ordinal()]
+								[TYPES.valueOf(defenderType1.toUpperCase().trim()).ordinal()]
+					  * typeInfo[TYPES.valueOf(attackerType.toUpperCase().trim()).ordinal()]
+						  		[TYPES.valueOf(defenderType2.toUpperCase().trim()).ordinal()];
+				}
+				else
+				{
+					d = typeInfo[TYPES.valueOf(attackerType.toUpperCase().trim()).ordinal()]
+						        [TYPES.valueOf(defenderType1.toUpperCase().trim()).ordinal()];				
+				}
 			}
 			else
-			{
-				d = typeInfo[TYPES.valueOf(attackerType.toUpperCase().trim()).ordinal()]
-					    [TYPES.valueOf(defenderType1.toUpperCase().trim()).ordinal()];				
-			}
+				return null;
+
 			return d;
 		}
 		catch(IllegalArgumentException e)
 		{
 			throw e;
 		}
+	}
+	
+	// TODO: Doc comment
+	public static ArrayList<Pair<Pokemon, Double>> rankAttackModifiers(ArrayList<Pokemon> attackers, Pokemon defender, boolean primary)
+	{
+		ArrayList<Pair<Pokemon, Double>> results = new ArrayList<Pair<Pokemon, Double>>();
+		for(Pokemon attacker : attackers)
+		{
+			Double d = getAttackModifier(attacker, defender, primary);
+			if (d != null)
+			{
+				results.add(new Pair<Pokemon, Double>(attacker, d));
+			}
+		}
+		
+		Collections.sort(results, Collections.reverseOrder());
+		return results;
+	}
+	
+	// TODO: Doc comment
+	public static ArrayList<Pair<Pokemon, Double>> rankDefenseModifiers(Pokemon attacker, ArrayList<Pokemon> defenders, boolean primary)
+	{
+		ArrayList<Pair<Pokemon, Double>> results = new ArrayList<Pair<Pokemon, Double>>();
+		for(Pokemon defender : defenders)
+		{
+			Double d = getAttackModifier(attacker, defender, primary);
+			if (d != null)
+			{
+				results.add(new Pair<Pokemon, Double>(defender, getAttackModifier(attacker, defender, primary)));
+			}
+		}
+		
+		Collections.sort(results);
+		return results;
 	}
 }

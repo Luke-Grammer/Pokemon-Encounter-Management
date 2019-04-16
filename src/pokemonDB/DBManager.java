@@ -17,15 +17,14 @@ import pokemonDB.model.Party;
 import pokemonDB.model.Pokemon;
 
 public class DBManager {
-	public static final String DATABASE = "PokemonDB";
-	public static final String IP = "localhost";
-	public static final int PORT = 27017; 
+	public final String DATABASE = "PokemonDB";
+	private String ip = "localhost";
+	private int port = 27017; 
 	
 	private PokemonDaoImpl pkmDao = null;
 	private PartyDaoImpl partyDao = null;
 	private MongoClient mongoClient = null;
 	private MongoDatabase database = null;
-	private static DBManager DBmgr = null;
 	private Logger mongoLogger = null;
 	MongoCollection<Document> coll = null;
 
@@ -34,14 +33,33 @@ public class DBManager {
 			mongoLogger = Logger.getLogger( "org.mongodb.driver" );
 			mongoLogger.setLevel(Level.WARNING);
 			
-			mongoClient = new MongoClient(IP , PORT);
+			mongoClient = new MongoClient(ip , port);
 			database = mongoClient.getDatabase(DATABASE);
 			if(database!=null) {
-				System.out.println("Connect to testdb Database Successful");
 				pkmDao = new PokemonDaoImpl(database);
 				partyDao = new PartyDaoImpl(database);
 			}
-			else System.out.println("Database NOT found!");
+			else System.out.println("Database " + DATABASE + " not found!");
+		} catch (MongoException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public DBManager(String ip, int port) {
+		try {
+			this.ip = ip;
+			this.port = port;
+			
+			mongoLogger = Logger.getLogger( "org.mongodb.driver" );
+			mongoLogger.setLevel(Level.WARNING);
+			
+			mongoClient = new MongoClient(ip , port);
+			database = mongoClient.getDatabase(DATABASE);
+			if(database!=null) {
+				pkmDao = new PokemonDaoImpl(database);
+				partyDao = new PartyDaoImpl(database);
+			}
+			else System.out.println("Database " + DATABASE + " not found!");
 		} catch (MongoException e) {
 			e.printStackTrace();
 		}
@@ -54,13 +72,6 @@ public class DBManager {
 		catch (MongoException e) {
 			e.printStackTrace();
 		}
-	}
-	// A singleton design pattern 
-	public static DBManager getInstance(){
-		if(DBmgr==null){
-			DBmgr = new DBManager();
-		}
-		return DBmgr;
 	}
 
 	public Pokemon findPokemon(String name) {
