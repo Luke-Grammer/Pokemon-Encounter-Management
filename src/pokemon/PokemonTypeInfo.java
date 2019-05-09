@@ -1,9 +1,10 @@
-package pokemonDB;
+package pokemon;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 
-import pokemonDB.model.Pokemon;
+import pokemon.model.Pokemon;
 
 /**
  * Represents pokemon type information and 
@@ -99,7 +100,7 @@ public class PokemonTypeInfo
 	}
 	
 	// TODO: Doc comment
-	public static ArrayList<Pair<Pokemon, Double>> rankAttackModifiers(ArrayList<Pokemon> attackers, Pokemon defender, boolean primary)
+	public static Collection<Pair<Pokemon, Double>> rankAttackModifiers(Collection<Pokemon> attackers, Pokemon defender, boolean primary)
 	{
 		ArrayList<Pair<Pokemon, Double>> results = new ArrayList<Pair<Pokemon, Double>>();
 		for(Pokemon attacker : attackers)
@@ -116,7 +117,7 @@ public class PokemonTypeInfo
 	}
 	
 	// TODO: Doc comment
-	public static ArrayList<Pair<Pokemon, Double>> rankDefenseModifiers(Pokemon attacker, ArrayList<Pokemon> defenders, boolean primary)
+	public static Collection<Pair<Pokemon, Double>> rankDefenseModifiers(Pokemon attacker, Collection<Pokemon> defenders, boolean primary)
 	{
 		ArrayList<Pair<Pokemon, Double>> results = new ArrayList<Pair<Pokemon, Double>>();
 		for(Pokemon defender : defenders)
