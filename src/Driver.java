@@ -1,6 +1,4 @@
-import java.util.Collection;
-
-import pokemon.Pair;
+import pokemon.PokemonClient;
 import pokemon.DataAccessManager;
 import pokemon.PokemonTypeInfo;
 import pokemon.model.Party;
@@ -12,25 +10,14 @@ public class Driver
 
 	public static void main(String[] args)
 	{
+		PokemonClient client = new PokemonClient();
 		DataAccessManager damgr = new DataAccessManager();
+		Party party = damgr.replaceParty("Pikachu", "Bulbasaur", "Squirtle", "Charmander", "Weedle", "Spearow");
+		Pokemon opponent = damgr.findPokemon(OPPONENT);
 
-		Party party = null;
-		Pokemon opponent = null;
-		party = damgr.replaceParty("Pikachu", "Bulbasaur", "Squirtle", "Charmander", "MissingNo.", "Spearow");
-		opponent = damgr.findPokemon(OPPONENT);
-
-		int i = 0;
-		System.out.println("Current party members ranked by primary attack damage to " + opponent.getName() + ": ");
-
-		Collection<Pair<Pokemon, Double>> results = PokemonTypeInfo.rankAttackModifiers(party.getPartyMembers(),
-				opponent, true);
-		if (results.size() != 0)
-			for (Pair<Pokemon, Double> result : results)
-			{
-				i++;
-				System.out.println("\t" + i + ") " + result.getFirst().getNameJap() + " (x" + result.getSecond() + ")");
-			}
-		else
-			System.out.println("Empty!");
+		
+		
+		 client.printResults(opponent, PokemonTypeInfo.rankAttackModifiers(party.getPartyMembers(),
+				opponent, true));
 	}
 }
