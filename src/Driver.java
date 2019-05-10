@@ -1,7 +1,7 @@
 import java.util.Collection;
 
 import pokemon.Pair;
-import pokemon.PokemonManager;
+import pokemon.DataAccessManager;
 import pokemon.PokemonTypeInfo;
 import pokemon.model.Party;
 import pokemon.model.Pokemon;
@@ -12,12 +12,12 @@ public class Driver
 
 	public static void main(String[] args)
 	{
-		PokemonManager pkmgr = new PokemonManager();
+		DataAccessManager damgr = new DataAccessManager();
 
 		Party party = null;
 		Pokemon opponent = null;
-		party = pkmgr.replaceParty("Pikachu", "Bulbasaur", "Squirtle", "Charmander", "Weedle", "Spearow");
-		opponent = pkmgr.findPokemon(OPPONENT);
+		party = damgr.replaceParty("Pikachu", "Bulbasaur", "Squirtle", "Charmander", "MissingNo.", "Spearow");
+		opponent = damgr.findPokemon(OPPONENT);
 
 		int i = 0;
 		System.out.println("Current party members ranked by primary attack damage to " + opponent.getName() + ": ");
@@ -28,7 +28,7 @@ public class Driver
 			for (Pair<Pokemon, Double> result : results)
 			{
 				i++;
-				System.out.println("\t" + i + ") " + result.getFirst().getName() + " (x" + result.getSecond() + ")");
+				System.out.println("\t" + i + ") " + result.getFirst().getNameJap() + " (x" + result.getSecond() + ")");
 			}
 		else
 			System.out.println("Empty!");

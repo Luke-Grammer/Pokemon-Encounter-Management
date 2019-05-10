@@ -47,11 +47,10 @@ public class Pokemon implements Serializable {
         this.name = name.toLowerCase().trim();
         this.name_jap = name_jap;
         this.desc = desc;
-        this.type1 = type1.toLowerCase().trim();
+        if (type1 != null && type1 != "")
+        	this.type1 = type1.toLowerCase().trim();
         if (type2 != null && type2 != "")
-        {
         	this.type2 = type2.toLowerCase().trim();
-        }
     }
 
     /**

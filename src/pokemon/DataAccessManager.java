@@ -10,7 +10,7 @@ import pokemon.file.PokemonFile;
 import pokemon.model.Party;
 import pokemon.model.Pokemon;
 
-public class PokemonManager {
+public class DataAccessManager {
 	private static final String FILENAME = "pokemon.csv";
 	private static final String PARTY_FILENAME = "party.csv";
 
@@ -19,7 +19,7 @@ public class PokemonManager {
 	private PokemonFile pkmFile = null;
 	private PokemonFile partyFile = null;
 
-	public PokemonManager() 
+	public DataAccessManager() 
 	{
 		pkmFile = new PokemonFile(FILENAME);
 		pkmDao = new PokemonDaoImpl(pkmFile);
