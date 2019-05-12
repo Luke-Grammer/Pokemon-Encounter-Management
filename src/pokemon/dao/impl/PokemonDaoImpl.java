@@ -19,14 +19,21 @@ public class PokemonDaoImpl implements PokemonDao {
 	@Override
 	public Pokemon findPokemon(String name) throws PokemonNotFoundException
 	{
-		if (name.toLowerCase().contains("missingno"))
+		name = name.trim().toLowerCase();
+		
+		if (name.contains("missingno"))
 			return new Pokemon(0, "MissingNo.", "MissingNo.", "Have you talked to the old man yet?", "NORMAL", "FLYING");
 		
-		Pokemon p = pkmFile.readPokemon(name.toLowerCase());
+		Pokemon p = pkmFile.readPokemon(name);
 		
-		if (p == null)
+		if (p == null && name.length() > 0)
 		{
-			System.out.println("Could not find " + name + "!");
+			System.out.println("Could not find " + name + "!\n");
+			throw new PokemonNotFoundException();
+		}
+		else if (p == null)
+		{
+			System.out.println("Pokemon not found!\n");
 			throw new PokemonNotFoundException();
 		}
 		

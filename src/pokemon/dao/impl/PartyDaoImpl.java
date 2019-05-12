@@ -51,8 +51,11 @@ public class PartyDaoImpl implements PartyDao
 		
 		for(String name : names)
 		{
-			Pokemon p = pkmDao.findPokemon(name);
-			pkmFile.writePokemon(p);
+			if (name.length() > 1)
+			{
+				Pokemon p = pkmDao.findPokemon(name);
+				pkmFile.writePokemon(p);
+			}
 		}
 		return getParty();
 	}
@@ -71,15 +74,22 @@ public class PartyDaoImpl implements PartyDao
 	}
 
 	@Override
-	public Party removeMember(String name)
+	public Party removeMember(String name) throws PokemonNotFoundException
 	{
 		Collection<Pokemon> party = getParty().getPartyMembers();
+		boolean found = false;
 		clearParty();
 		for (Pokemon p : party)
 		{
 			if (p.getName().toLowerCase() != name.toLowerCase())
 				pkmFile.writePokemon(p);
+			else
+				found = true;
 		}
+		
+		if (!found)
+			throw new PokemonNotFoundException();
+		
 		return getParty();
 	}
 }

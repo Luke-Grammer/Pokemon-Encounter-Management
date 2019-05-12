@@ -23,7 +23,7 @@
 23,Ekans,Arboアーボ,Snake Pokémon,poison,
 24,Arbok,Arbokアーボック,Cobra Pokémon,poison,
 25,Pikachu,Pikachuピカチュウ,Mouse Pokémon,electric,
-26,Raichu,Raichuライチュウ,Mouse Pokémon,electric,electric
+26,Raichu,Raichuライチュウ,Mouse Pokémon,electric,
 27,Sandshrew,Sandサンド,Mouse Pokémon,ground,ice
 28,Sandslash,Sandpanサンドパン,Mouse Pokémon,ground,ice
 29,Nidoran♀,Nidoran?ニドラン♀,Poison Pin Pokémon,poison,
@@ -47,8 +47,8 @@
 47,Parasect,Parasectパラセクト,Mushroom Pokémon,bug,grass
 48,Venonat,Kongpangコンパン,Insect Pokémon,bug,poison
 49,Venomoth,Morphonモルフォン,Poison Moth Pokémon,bug,poison
-50,Diglett,Digdaディグダ,Mole Pokémon,ground,ground
-51,Dugtrio,Dugtrioダグトリオ,Mole Pokémon,ground,ground
+50,Diglett,Digdaディグダ,Mole Pokémon,ground,
+51,Dugtrio,Dugtrioダグトリオ,Mole Pokémon,ground,
 52,Meowth,Nyarthニャース,Scratch Cat Pokémon,normal,dark
 53,Persian,Persianペルシアン,Classy Cat Pokémon,normal,dark
 54,Psyduck,Koduckコダック,Duck Pokémon,water,
@@ -85,8 +85,8 @@
 85,Dodrio,Dodorioドードリオ,Triple Bird Pokémon,normal,flying
 86,Seel,Pawouパウワウ,Sea Lion Pokémon,water,
 87,Dewgong,Jugonジュゴン,Sea Lion Pokémon,water,ice
-88,Grimer,Betbeterベトベター,Sludge Pokémon,poison,poison
-89,Muk,Betbetonベトベトン,Sludge Pokémon,poison,poison
+88,Grimer,Betbeterベトベター,Sludge Pokémon,poison,
+89,Muk,Betbetonベトベトン,Sludge Pokémon,poison,
 90,Shellder,Shellderシェルダー,Bivalve Pokémon,water,
 91,Cloyster,Parshenパルシェン,Bivalve Pokémon,water,ice
 92,Gastly,Ghosゴース,Gas Pokémon,ghost,poison

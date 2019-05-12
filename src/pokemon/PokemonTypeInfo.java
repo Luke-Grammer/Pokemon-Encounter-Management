@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
+import pokemon.model.Party;
 import pokemon.model.Pokemon;
 
 /**
@@ -100,10 +101,10 @@ public class PokemonTypeInfo
 	}
 	
 	// TODO: Doc comment
-	public static Collection<Pair<Pokemon, Double>> rankAttackModifiers(Collection<Pokemon> attackers, Pokemon defender, boolean primary)
+	public static Collection<Pair<Pokemon, Double>> rankAttackModifiers(Party attackers, Pokemon defender, boolean primary)
 	{
 		ArrayList<Pair<Pokemon, Double>> results = new ArrayList<Pair<Pokemon, Double>>();
-		for(Pokemon attacker : attackers)
+		for(Pokemon attacker : attackers.getPartyMembers())
 		{
 			Double d = getAttackModifier(attacker, defender, primary);
 			if (d != null)
@@ -117,10 +118,10 @@ public class PokemonTypeInfo
 	}
 	
 	// TODO: Doc comment
-	public static Collection<Pair<Pokemon, Double>> rankDefenseModifiers(Pokemon attacker, Collection<Pokemon> defenders, boolean primary)
+	public static Collection<Pair<Pokemon, Double>> rankDefenseModifiers(Pokemon attacker, Party defenders, boolean primary)
 	{
 		ArrayList<Pair<Pokemon, Double>> results = new ArrayList<Pair<Pokemon, Double>>();
-		for(Pokemon defender : defenders)
+		for(Pokemon defender : defenders.getPartyMembers())
 		{
 			Double d = getAttackModifier(attacker, defender, primary);
 			if (d != null)

@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,7 +20,20 @@ public class PokemonFile {
 	
 	public PokemonFile(String filename) 
 	{
-		file = new File(filename);
+		file = new File(Paths.get("").toAbsolutePath().toString() + File.separatorChar + filename);
+		if (!file.exists())
+		{
+			try
+			{
+				System.out.println(file.getAbsolutePath() + " does not exist!");
+				System.out.println("Creating...");
+				file.createNewFile();
+			} catch (IOException e)
+			{
+				System.out.println(file.getAbsolutePath() + " does not exist and could not be created!");
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public void writePokemon(Pokemon pokemon)
