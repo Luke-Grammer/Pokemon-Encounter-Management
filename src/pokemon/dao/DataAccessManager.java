@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import pokemon.dao.impl.PartyDaoImpl;
 import pokemon.dao.impl.PokemonDaoImpl;
+import pokemon.exceptions.NotInPartyException;
 import pokemon.exceptions.PartyOverflowException;
 import pokemon.exceptions.PokemonNotFoundException;
 import pokemon.file.PokemonFile;
@@ -14,8 +15,8 @@ public class DataAccessManager {
 	private static final String FILENAME = "pokemon.csv";
 	private static final String PARTY_FILENAME = "party.csv";
 
-	private PokemonDaoImpl pkmDao = null;
-	private PartyDaoImpl partyDao = null;
+	private PokemonDao pkmDao = null;
+	private PartyDao partyDao = null;
 	private PokemonFile pkmFile = null;
 	private PokemonFile partyFile = null;
 
@@ -28,7 +29,7 @@ public class DataAccessManager {
 		partyDao = new PartyDaoImpl(pkmDao, partyFile); // TODO: Implement multiple parties?
 	}
 
-	public Pokemon findPokemon(String name) throws PokemonNotFoundException
+	public Pokemon findPokemon(String name)
 	{
 		return pkmDao.findPokemon(name);
 	}
@@ -53,7 +54,7 @@ public class DataAccessManager {
 		return partyDao.addMember(name);
 	}
 
-	public Party removeMember(String name) throws PokemonNotFoundException
+	public Party removeMember(String name) throws NotInPartyException
 	{
 		return partyDao.removeMember(name);
 	}

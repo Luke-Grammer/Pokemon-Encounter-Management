@@ -3,32 +3,35 @@ package pokemon.dao.impl;
 import java.util.Collection;
 
 import pokemon.dao.PartyDao;
+import pokemon.dao.PokemonDao;
+import pokemon.exceptions.NotInPartyException;
 import pokemon.exceptions.PartyOverflowException;
 import pokemon.exceptions.PokemonNotFoundException;
 import pokemon.file.PokemonFile;
 import pokemon.model.Party;
 import pokemon.model.Pokemon;
+import pokemon.model.impl.PartyImpl;
 
 public class PartyDaoImpl implements PartyDao
 {	
-	private PokemonDaoImpl pkmDao  = null;
+	private PokemonDao pkmDao  = null;
 	private PokemonFile pkmFile = null;
 	
-    public PartyDaoImpl(PokemonDaoImpl pkmDao, PokemonFile pkmFile) 
+    public PartyDaoImpl(PokemonDao pkmDao2, PokemonFile pkmFile) 
     {
     	this.pkmFile = pkmFile;
-    	this.pkmDao = pkmDao;
+    	this.pkmDao = pkmDao2;
     }
 
 	@Override
 	public Party getParty()
 	{
 		try {
-			return new Party(pkmFile.readAllPokemon());
+			return new PartyImpl(pkmFile.readAllPokemon());
 		} catch (PartyOverflowException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return new Party();
+			return new PartyImpl();
 		}
 	}
 
@@ -41,22 +44,30 @@ public class PartyDaoImpl implements PartyDao
 	@Override
 	public Party replaceParty(String ... names) throws PartyOverflowException, PokemonNotFoundException
 	{
-		clearParty();
-		
 		if (names.length > 6)
 		{
 			System.out.println("Attempting to create party with too many pokemon! (" + names.length + ")");
 			throw new PartyOverflowException();
 		}
+				
+		clearParty();
+		boolean errorFlag = false;
 		
 		for(String name : names)
 		{
 			if (name.length() > 1)
 			{
 				Pokemon p = pkmDao.findPokemon(name);
-				pkmFile.writePokemon(p);
+				if (p != null)
+					pkmFile.writePokemon(p);
+				else
+					errorFlag = true;
 			}
 		}
+		
+		if(errorFlag)
+			throw new PokemonNotFoundException();
+		
 		return getParty();
 	}
 
@@ -69,26 +80,31 @@ public class PartyDaoImpl implements PartyDao
 			throw new PartyOverflowException();
 		}
 		
-		pkmFile.writePokemon(pkmDao.findPokemon(name));
+		Pokemon p = pkmDao.findPokemon(name);
+		if (p != null)
+			pkmFile.writePokemon(p);
+		else
+			throw new PokemonNotFoundException();
 		return getParty();
 	}
 
 	@Override
-	public Party removeMember(String name) throws PokemonNotFoundException
+	public Party removeMember(String name) throws NotInPartyException
 	{
 		Collection<Pokemon> party = getParty().getPartyMembers();
-		boolean found = false;
+		boolean errorFlag = true;
+		
 		clearParty();
 		for (Pokemon p : party)
 		{
 			if (p.getName().toLowerCase() != name.toLowerCase())
 				pkmFile.writePokemon(p);
 			else
-				found = true;
+				errorFlag = false;
 		}
 		
-		if (!found)
-			throw new PokemonNotFoundException();
+		if (errorFlag)
+			throw new NotInPartyException();
 		
 		return getParty();
 	}

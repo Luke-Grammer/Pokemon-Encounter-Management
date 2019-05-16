@@ -6,13 +6,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Scanner;
 
 import pokemon.model.Pokemon;
+import pokemon.model.impl.PokemonImpl;
 
 public class PokemonFile {
 	
@@ -20,7 +20,7 @@ public class PokemonFile {
 	
 	public PokemonFile(String filename) 
 	{
-		file = new File(Paths.get("").toAbsolutePath().toString() + File.separatorChar + filename);
+		file = new File(System.getProperty("user.dir") + File.separatorChar + filename);
 		if (!file.exists())
 		{
 			try
@@ -32,6 +32,7 @@ public class PokemonFile {
 			{
 				System.out.println(file.getAbsolutePath() + " does not exist and could not be created!");
 				e.printStackTrace();
+				System.exit(1);
 			}
 		}
 	}
@@ -45,6 +46,7 @@ public class PokemonFile {
 		} catch (IOException e) {
 			System.out.println("Could not perform write operation on " + file.getAbsolutePath() + "!");
 			e.printStackTrace();
+			System.exit(1);
 		}
 	}
 	
@@ -56,6 +58,7 @@ public class PokemonFile {
 		} catch (IOException e) {
 			System.out.println("Could not perform write operation on " + file.getAbsolutePath() + "!");
 			e.printStackTrace();
+			System.exit(1);
 		}
 	}
 	
@@ -67,7 +70,7 @@ public class PokemonFile {
 			
 			while(sc.hasNextLine())
 			{
-				p = new Pokemon(sc.nextLine());
+				p = new PokemonImpl(sc.nextLine());
 				if (p.getName().toLowerCase().equals(name))
 				{
 					sc.close();
@@ -78,6 +81,7 @@ public class PokemonFile {
 		} catch (FileNotFoundException e) {
 			System.out.println(file.getAbsolutePath() + " does not exist for reading!");
 			e.printStackTrace();
+			System.exit(1);
 		}
 		
 		return null;
@@ -90,12 +94,13 @@ public class PokemonFile {
 			Scanner sc = new Scanner(file, "UTF-8");
 			while(sc.hasNext())
 			{
-				p.add(new Pokemon(sc.nextLine()));
+				p.add(new PokemonImpl(sc.nextLine()));
 			}	
 			sc.close();
 		} catch (FileNotFoundException e) {
 			System.out.println(file.getAbsolutePath() + " does not exist for reading!");
 			e.printStackTrace();
+			System.exit(1);
 		}	
 	
 		return p;	

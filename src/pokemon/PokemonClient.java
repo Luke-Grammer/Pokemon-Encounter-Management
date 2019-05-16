@@ -1,8 +1,6 @@
 package pokemon;
 
 import java.io.IOException;
-import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.Scanner;
 
@@ -19,6 +17,8 @@ public class PokemonClient {
 	private DataAccessManager damgr = null;
 	MusicPlayer mp = null;
 	Scanner sc = null;
+	boolean playing = true;
+	int volume = (int) Math.round(MusicPlayer.STARTING_VOLUME * 10);
 
 	public PokemonClient()
 	{
@@ -46,33 +46,43 @@ public class PokemonClient {
 		{
 			printCurrentParty();
 
-			System.out.println("\nMain Menu");
+			System.out.println("Main Menu");
 			System.out.println("1. Select an opponent");
-			System.out.println("2. Change party");
-			System.out.println("3. Get pokemon information");
-			System.out.println("4. Settings");
-			System.out.println("5. Quit");
-
-			System.out.print("\nPlease select an option: ");
+			System.out.println("2. Replace Party");
+			System.out.println("3. Add party members");
+			System.out.println("4. Swap party member");
+			System.out.println("5. Get pokemon information");
+			System.out.println("6. Settings");
+			System.out.println("7. Quit");
+			System.out.println();
+			System.out.print("Please select an option: ");
 			String input = sc.nextLine();
 
-			if (input.startsWith("1"))
+			if (input.equals("1"))
 			{
 				clear(false);
 				battleInfo();
-			} else if (input.startsWith("2"))
+			} else if (input.equals("2"))
 			{
 				clear(false);
-				changeParty();
-			} else if (input.startsWith("3"))
+				replaceParty();
+			} else if (input.equals("3"))
+			{
+				clear(false);
+				addPartyMembers();
+			} else if (input.equals("4"))
+			{
+				clear(false);
+				//swapPartyMember();
+			} else if (input.equals("5"))
 			{
 				clear(false);
 				pokemonInfo();
-			} else if (input.startsWith("4"))
+			} else if (input.equals("6"))
 			{
 				clear(false);
-				settings();
-			} else if (input.startsWith("5"))
+				settingsMenu();
+			} else if (input.equals("7"))
 			{
 				break;
 			} else
@@ -84,35 +94,93 @@ public class PokemonClient {
 		}
 	}
 
-	private void settings()
+	private void settingsMenu()
 	{
-		System.out.println("Settings coming soon!");
+		System.out.println("Settings Menu");
+		System.out.println("1. Turn music " + (playing ? "off" : "on"));
+		System.out.println("2. Change volume (current volume = " + volume + ")");
+		System.out.println("3. Return to main menu");
+		System.out.println();
+		System.out.print("Please select an option: ");
+		String input = sc.nextLine();
+
+		if (input.equals("1"))
+		{
+			if (playing) 
+				mp.pause();
+			else
+				mp.unpause();
+			
+			playing = !playing;
+			System.out.println("\nMusic has been turned " + (playing ? "on" : "off") + "!");
+			
+		} else if (input.equals("2"))
+		{
+			System.out.print("\nPlease enter a new volume as an integer [0 - 10]: ");
+			if (sc.hasNextInt())
+			{
+				int temp = sc.nextInt();
+				sc.nextLine();
+				if (temp < 0 || temp > 10)
+				{
+					System.out.println("Invalid volume, must be in the range [0 - 10]!");
+					System.out.println("Volume not changed, please try again.");
+					clear(true);
+					settingsMenu();
+					return;
+				}
+				else
+				{
+					volume = temp;
+					mp.setVolume(volume / 10.0);
+					System.out.println("\nVolume has been changed to " + volume + "!");
+				}
+			}
+			else
+			{
+				sc.nextLine();
+				System.out.println("Input could not be interpreted, please try again.");
+				clear(true);
+				settingsMenu();
+				return;
+			}
+		} else if (input.equals("3"))
+		{
+			return;
+		} else
+			System.out.println("Input not recognized, please try again.");
 		clear(true);
+		settingsMenu();
+		return;
 	}
 
 	private void pokemonInfo()
 	{
 		printCurrentParty();
 		
-		System.out.print("\nPlease enter the name of the pokemon you want to learn more about: ");
-		try
+		System.out.print("Please enter the name of the pokemon you want to learn more about: ");
+
+		Pokemon p = damgr.findPokemon(sc.nextLine());
+			
+		if (p != null)
 		{
-			Pokemon p = damgr.findPokemon(sc.nextLine());
-			System.out.print(p.getName());
-			try 
+			System.out.println(p.getName());
+			
+			/*try 
 			{
 				PrintStream out = new PrintStream(System.out, true, "UTF-8");
 				out.println("\t(Japanese name: " + p.getNameJap() + ")");
 			} catch(UnsupportedEncodingException e)
 			{
 				System.out.println("\tCannot print japanese name (unsupported encoding)");
-			}
+			}*/
+			
 			System.out.println("Pokedex Number: " + p.getPokedexNumber());
 			System.out.println("Description:    " + p.getDesc());
 			System.out.println("Primary type:   " + p.getPrimaryType());
 			System.out.println("Secondary type: " + ((p.getSecondaryType() == null) ? "None" : p.getSecondaryType()));
-		} catch (PokemonNotFoundException e) {}
-		System.out.println();
+		}
+		
 		clear(true);
 	}
 
@@ -120,10 +188,11 @@ public class PokemonClient {
 	{
 		clear(false);
 		
-		System.out.println("Pokemon Encounter Utility Version " + VERSION + "\n");
+		System.out.println("Pokemon Encounter Utility Version " + VERSION);
+		System.out.println();
 		Party party = damgr.getParty();
 		int i = 0;
-		if (party.getPartyMembers().size() == 0)
+		if (party.size() == 0)
 		{
 			System.out.println("Your current party is empty!");
 		} else
@@ -135,55 +204,114 @@ public class PokemonClient {
 						+ (p.getSecondaryType() == null ? "" : ("/" + p.getSecondaryType().toUpperCase())) + ")");
 			}
 		}
-		for (; i < 6; i++)
+		for (; i <= 6; i++)
 		{
 			System.out.println();
 		}
 	}
 
-	private void changeParty()
+	private void replaceParty()
 	{
 		printCurrentParty();
 
-		System.out.println("\nPlease enter your new party as a list and press 'enter' when finished.");
+		System.out.println("Please enter your new party as a list and press 'enter' when finished.");
 		try
 		{
-			damgr.replaceParty(sc.nextLine().trim().toLowerCase().split("[ ,]+"));
-			System.out.println("\nParty successfully changed!\n");
+			String[] party = sc.nextLine().trim().split("[ ,]+");
+			if(party.length == 1)
+				if(party[0].isEmpty())
+					return;
+			
+			damgr.replaceParty(party);
+			System.out.println("\nParty successfully replaced!");
 		} catch (PokemonNotFoundException e)
 		{
-			System.out.println("\nParty was not successfully changed. Please try again.");
+			System.out.println("\nParty was not successfully replaced. Please add any remaining party members.");
 			clear(true);
-			changeParty();
+			addPartyMembers();
 			return;
 		} catch (PartyOverflowException e)
 		{
 			System.out.println("\nMaximum party size is 6. Please try again.");
 			clear(true);
-			changeParty();
+			replaceParty();
 			return;
 		}
 		clear(true);
+	}
+	
+	public void addPartyMembers()
+	{
+		printCurrentParty();
+		boolean errorFlag = false;
+		
+		System.out.println("Please enter the pokemon you would like to add as a list and press 'enter' when finished.");
+		try
+		{
+			String[] names = sc.nextLine().trim().split("[ ,]+");
+
+			for (String name : names)
+			{			
+				if (name.isEmpty())
+					return;
+				
+				try
+				{
+					damgr.addMember(name);
+				} catch (PokemonNotFoundException e)
+				{
+					errorFlag = true;
+				}
+			}
+		} catch (PartyOverflowException e)
+		{
+			System.out.println("\nMaximum party size is 6. Some party members could not be added.");
+			clear(true);
+			addPartyMembers();
+			return;
+		}
+		
+		if (errorFlag)
+		{
+			System.out.println("\nSome party members could not be added. Please try again.");
+			clear(true);
+			addPartyMembers();
+			return;			
+		}
+		else
+			System.out.println("\nParty successfully updated!");			
+		
+		clear(true);
+	}
+	
+	public void swapPartyMembers()
+	{
+		printCurrentParty();
+		
 	}
 
 	public void battleInfo()
 	{
 		printCurrentParty();
 
-		System.out.print("\nPlease enter an opponent: ");
+		System.out.print("Please enter an opponent: ");
 		String input = sc.nextLine();
-
-		Pokemon opponent = null;
-		try
+		
+		if (input.trim().isEmpty())
+			return;
+		
+		Pokemon opponent = damgr.findPokemon(input);
+			
+		if (opponent != null)
 		{
-			opponent = damgr.findPokemon(input);
-
 			System.out.println("Opponent: " + opponent.getName() + "\t(" + opponent.getPrimaryType().toUpperCase()
 					+ (opponent.getSecondaryType() == null ? "" : ("/" + opponent.getSecondaryType().toUpperCase()))
 					+ ")\n");
 			printAllResults(opponent);
-		} catch (PokemonNotFoundException e)
+		}
+		else
 		{
+			System.out.println("Opponent could not be found, please ensure the name is typed correctly and try again.");
 		}
 		clear(true);
 	}
@@ -193,7 +321,7 @@ public class PokemonClient {
 		Party party = damgr.getParty();
 		Collection<Pair<Pokemon, Double>> results;
 		
-		if (party.getPartyMembers().size() == 0)
+		if (party.size() == 0)
 		{
 			System.out.println("Your party is empty!");
 			return;
@@ -238,14 +366,13 @@ public class PokemonClient {
 		{
 			System.out.println("\t" + ++i + ") " + result.getFirst().getName() + " (x" + result.getSecond() + ")");
 		}
-		System.out.println();
 	}
 
 	private void clear(boolean pause)
 	{
 		if (pause)
 		{
-			System.out.println("Press 'enter' to continue...");
+			System.out.println("\nPress 'enter' to continue...");
 			sc.nextLine();
 		}
 
