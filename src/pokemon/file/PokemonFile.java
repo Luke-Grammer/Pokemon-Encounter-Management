@@ -41,7 +41,7 @@ public class PokemonFile {
 	{
 		try {
 			BufferedWriter writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8, StandardOpenOption.APPEND);
-			writer.write(pokemon.toString() + "\n");
+			writer.write(pokemon.getPokedexNumber() + "," + pokemon.getName() + "," + pokemon.getNameJap() + "," + pokemon.getDesc() + "," + pokemon.getPrimaryType() + "," + pokemon.getSecondaryType() + "\n");
 			writer.close();
 		} catch (IOException e) {
 			System.out.println("Could not perform write operation on " + file.getAbsolutePath() + "!");
@@ -50,7 +50,7 @@ public class PokemonFile {
 		}
 	}
 	
-	public void clear()
+	public void clearFile()
 	{
 		try {
 			BufferedWriter writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8, StandardOpenOption.TRUNCATE_EXISTING);

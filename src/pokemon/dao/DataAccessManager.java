@@ -44,18 +44,18 @@ public class DataAccessManager {
 		return partyDao.getParty();
 	}
 
-	public Party replaceParty(String ... pokemon) throws PartyOverflowException, PokemonNotFoundException
+	public void replaceParty(String ... pokemon) throws PartyOverflowException, PokemonNotFoundException
 	{
-		return partyDao.replaceParty(pokemon);
+		partyDao.replaceParty(pokemon);
 	}
 
-	public Party addMember(String name) throws PartyOverflowException, PokemonNotFoundException
+	public void addMember(String name) throws PartyOverflowException, PokemonNotFoundException
 	{
-		return partyDao.addMember(name);
+		partyDao.addMember(name);
 	}
 
-	public Party removeMember(String name) throws NotInPartyException
+	public void removeMember(String name) throws NotInPartyException
 	{
-		return partyDao.removeMember(name);
+		partyDao.removeMember(name);
 	}
 }

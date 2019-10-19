@@ -11,9 +11,9 @@ public interface PartyDao
 	
 	void clearParty();
 	
-	Party replaceParty(String ... names) throws PartyOverflowException, PokemonNotFoundException;
+	void replaceParty(String ... names) throws PartyOverflowException, PokemonNotFoundException;
 	
-	Party addMember(String name) throws PartyOverflowException, PokemonNotFoundException;
+	void addMember(String name) throws PartyOverflowException, PokemonNotFoundException;
 	
-	Party removeMember(String name) throws NotInPartyException;
+	void removeMember(String name) throws NotInPartyException;
 }

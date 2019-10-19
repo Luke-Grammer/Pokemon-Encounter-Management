@@ -2,14 +2,12 @@ package pokemon.music;
 
 import java.io.File;
 import javafx.embed.swing.JFXPanel;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaException;
-import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.*;
 
 public class MusicPlayer extends Thread
 {
 	private static final String TRACK_NAME = "P_GO.mp3";
-	public static final double STARTING_VOLUME = 0.5;
+	public static final int STARTING_VOLUME = 5;
 	private MediaPlayer mediaPlayer = null;
 	
 	public MusicPlayer()
@@ -30,7 +28,7 @@ public class MusicPlayer extends Thread
 	public void run()
 	{
 		mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-		mediaPlayer.setVolume(0.5);
+		mediaPlayer.setVolume(STARTING_VOLUME / 10.0);
 		mediaPlayer.play();		
 	}
 	
@@ -44,8 +42,8 @@ public class MusicPlayer extends Thread
 		mediaPlayer.play();		
 	}
 	
-	public void setVolume(double volume)
+	public void setVolume(int volume)
 	{
-		mediaPlayer.setVolume(volume);
+		mediaPlayer.setVolume(volume / 10.0);
 	}
 }

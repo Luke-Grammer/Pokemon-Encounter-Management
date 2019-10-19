@@ -17,8 +17,8 @@ public class PokemonImpl implements Pokemon, Serializable
 	private String name;
 	private String name_jap;
 	private String desc;
-	private String type1;
-	private String type2 = null;
+	private String type1 = "";
+	private String type2 = "";
 
 	public PokemonImpl(String line)
 	{
@@ -29,7 +29,7 @@ public class PokemonImpl implements Pokemon, Serializable
 		name_jap = split[2];
 		desc = split[3];
 		type1 = split[4];
-		type2 = (split.length == 5) ? null : split[5];
+		type2 = (split.length == 5) ? "" : split[5];
 	}
 
 	/**
@@ -39,7 +39,6 @@ public class PokemonImpl implements Pokemon, Serializable
 	 * @param name   is the name of the pokemon.
 	 * @param type1  is the pokemon's primary type.
 	 * @param type2  is the pokemon's secondary type.
-	 * @param d      is the document in the database corresponding to the object.
 	 */
 	public PokemonImpl(Integer number, String name, String name_jap, String desc, String type1, String type2)
 	{
@@ -47,9 +46,9 @@ public class PokemonImpl implements Pokemon, Serializable
 		this.name = name.toLowerCase().trim();
 		this.name_jap = name_jap;
 		this.desc = desc;
-		if (type1 != null && type1 != "")
+		if (type1 != null)
 			this.type1 = type1.toLowerCase().trim();
-		if (type2 != null && type2 != "")
+		if (type2 != null)
 			this.type2 = type2.toLowerCase().trim();
 	}
 
@@ -90,7 +89,10 @@ public class PokemonImpl implements Pokemon, Serializable
 	 */
 	public String getPrimaryType()
 	{
-		return type1.substring(0, 1).toUpperCase() + type1.substring(1);
+		if (type1 != "")
+			return type1.substring(0, 1).toUpperCase() + type1.substring(1);
+		else
+			return "";
 	}
 
 	/**
@@ -100,14 +102,20 @@ public class PokemonImpl implements Pokemon, Serializable
 	 */
 	public String getSecondaryType()
 	{
-		if (type2 != null)
+		if (type2 != "")
 			return type2.substring(0, 1).toUpperCase() + type2.substring(1);
 		else
-			return null;
+			return "";
 	}
 
 	public String toString()
 	{
-		return number + "," + name + "," + name_jap + "," + desc + "," + type1 + "," + ((type2 == null) ? "" : type2);
+		String returnString = name + "\t(" + type1.toUpperCase();
+		if (!type2.equals(""))
+		{
+			returnString += "/" + type2.toUpperCase();
+		}
+		returnString += ")";
+		return returnString;
 	}
 }

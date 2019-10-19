@@ -1,24 +1,23 @@
 package pokemon;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Scanner;
 
 import pokemon.dao.DataAccessManager;
-import pokemon.exceptions.PartyOverflowException;
-import pokemon.exceptions.PokemonNotFoundException;
-import pokemon.model.Party;
-import pokemon.model.Pokemon;
+import pokemon.exceptions.*;
+import pokemon.model.*;
 import pokemon.music.MusicPlayer;
 
 public class PokemonClient {
-	public static String VERSION = "1.0";
+	public static String VERSION = "1.1";
 
 	private DataAccessManager damgr = null;
-	MusicPlayer mp = null;
-	Scanner sc = null;
+	private MusicPlayer mp = null;
+	private Scanner sc = null;
 	boolean playing = true;
-	int volume = (int) Math.round(MusicPlayer.STARTING_VOLUME * 10);
+	int volume = MusicPlayer.STARTING_VOLUME;
 
 	public PokemonClient()
 	{
@@ -44,6 +43,12 @@ public class PokemonClient {
 	{
 		while (true)
 		{
+			
+			clear(false);
+			
+			System.out.println("Pokemon Encounter Utility Version " + VERSION);
+			System.out.println();
+			
 			printCurrentParty();
 
 			System.out.println("Main Menu");
@@ -132,7 +137,7 @@ public class PokemonClient {
 				else
 				{
 					volume = temp;
-					mp.setVolume(volume / 10.0);
+					mp.setVolume(volume);
 					System.out.println("\nVolume has been changed to " + volume + "!");
 				}
 			}
@@ -186,28 +191,7 @@ public class PokemonClient {
 
 	private void printCurrentParty()
 	{
-		clear(false);
-		
-		System.out.println("Pokemon Encounter Utility Version " + VERSION);
-		System.out.println();
-		Party party = damgr.getParty();
-		int i = 0;
-		if (party.size() == 0)
-		{
-			System.out.println("Your current party is empty!");
-		} else
-		{
-			System.out.println("Current party:");
-			for (Pokemon p : party.getPartyMembers())
-			{
-				System.out.println("\t" + ++i + ") " + p.getName() + "\t(" + p.getPrimaryType().toUpperCase()
-						+ (p.getSecondaryType() == null ? "" : ("/" + p.getSecondaryType().toUpperCase())) + ")");
-			}
-		}
-		for (; i <= 6; i++)
-		{
-			System.out.println();
-		}
+		System.out.println(damgr.getParty());
 	}
 
 	private void replaceParty()
@@ -304,9 +288,8 @@ public class PokemonClient {
 			
 		if (opponent != null)
 		{
-			System.out.println("Opponent: " + opponent.getName() + "\t(" + opponent.getPrimaryType().toUpperCase()
-					+ (opponent.getSecondaryType() == null ? "" : ("/" + opponent.getSecondaryType().toUpperCase()))
-					+ ")\n");
+			System.out.println("Opponent: " + opponent);
+			System.out.println();
 			printAllResults(opponent);
 		}
 		else
@@ -319,7 +302,7 @@ public class PokemonClient {
 	public void printAllResults(Pokemon opponent)
 	{
 		Party party = damgr.getParty();
-		Collection<Pair<Pokemon, Double>> results;
+		ArrayList<Collection<Pair<Pokemon, Double>>> results = new ArrayList<Collection<Pair<Pokemon, Double>>>();
 		
 		if (party.size() == 0)
 		{
@@ -327,35 +310,22 @@ public class PokemonClient {
 			return;
 		}
 
-		results = PokemonTypeInfo.rankAttackModifiers(party, opponent, true);
-		if (results.size() > 0)
+		results.add(PokemonTypeInfo.rankAttackModifiers(party, opponent, true));
+		results.add(PokemonTypeInfo.rankAttackModifiers(party, opponent, false));
+		results.add(PokemonTypeInfo.rankDefenseModifiers(opponent, party, true));
+		results.add(PokemonTypeInfo.rankDefenseModifiers(opponent, party, false));
+		
+		String[] info = { "primary attack damage to ", "secondary attack damage to ", "damage taken from the primary type of ", "damage taken from the secondary type of"};
+		
+		int i = 0;
+		for(Collection<Pair<Pokemon, Double>> result : results)
 		{
-			System.out.println("Current party members ranked by primary attack damage to " + opponent.getName() + ": ");
-			printResults(results);
-		}
-
-		results = PokemonTypeInfo.rankAttackModifiers(party, opponent, false);
-		if (results.size() > 0)
-		{
-			System.out
-					.println("Current party members ranked by secondary attack damage to " + opponent.getName() + ": ");
-			printResults(results);
-		}
-
-		results = PokemonTypeInfo.rankDefenseModifiers(opponent, party, true);
-		if (results.size() > 0)
-		{
-			System.out.println(
-					"Current party members ranked by damage taken from " + opponent.getName() + "'s primary type: ");
-			printResults(results);
-		}
-
-		results = PokemonTypeInfo.rankDefenseModifiers(opponent, party, false);
-		if (results.size() > 0)
-		{
-			System.out.println(
-					"Current party members ranked by damage taken from " + opponent.getName() + "'s secondary type: ");
-			printResults(results);
+			if (result.size() > 0)
+			{
+				System.out.println("Current party members ranked by " + info[i++] + opponent.getName() + ": ");
+				printResults(result);
+			}
+			System.out.println();
 		}
 	}
 

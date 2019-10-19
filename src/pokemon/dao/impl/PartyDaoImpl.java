@@ -38,11 +38,11 @@ public class PartyDaoImpl implements PartyDao
 	@Override
 	public void clearParty()
 	{
-		pkmFile.clear();
+		pkmFile.clearFile();
 	}
 	
 	@Override
-	public Party replaceParty(String ... names) throws PartyOverflowException, PokemonNotFoundException
+	public void replaceParty(String ... names) throws PartyOverflowException, PokemonNotFoundException
 	{
 		if (names.length > 6)
 		{
@@ -67,14 +67,12 @@ public class PartyDaoImpl implements PartyDao
 		
 		if(errorFlag)
 			throw new PokemonNotFoundException();
-		
-		return getParty();
 	}
 
 	@Override
-	public Party addMember(String name) throws PartyOverflowException, PokemonNotFoundException
+	public void addMember(String name) throws PartyOverflowException, PokemonNotFoundException
 	{
-		if (getParty().getPartyMembers().size() > 5)
+		if (getParty().size() > 5)
 		{
 			System.out.println("Attempting to add a pokemon to full party!");
 			throw new PartyOverflowException();
@@ -85,11 +83,10 @@ public class PartyDaoImpl implements PartyDao
 			pkmFile.writePokemon(p);
 		else
 			throw new PokemonNotFoundException();
-		return getParty();
 	}
 
 	@Override
-	public Party removeMember(String name) throws NotInPartyException
+	public void removeMember(String name) throws NotInPartyException
 	{
 		Collection<Pokemon> party = getParty().getPartyMembers();
 		boolean errorFlag = true;
@@ -97,7 +94,7 @@ public class PartyDaoImpl implements PartyDao
 		clearParty();
 		for (Pokemon p : party)
 		{
-			if (p.getName().toLowerCase() != name.toLowerCase())
+			if (!p.getName().toLowerCase().equals(name.toLowerCase()))
 				pkmFile.writePokemon(p);
 			else
 				errorFlag = false;
@@ -105,7 +102,5 @@ public class PartyDaoImpl implements PartyDao
 		
 		if (errorFlag)
 			throw new NotInPartyException();
-		
-		return getParty();
 	}
 }

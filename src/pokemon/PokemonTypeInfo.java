@@ -74,9 +74,9 @@ public class PokemonTypeInfo
 		Double d;
 		try 
 		{
-			if (attackerType != null)
+			if (!attackerType.equals(""))
 			{
-				if (defenderType2 != null)
+				if (!defenderType2.equals(""))
 				{
 					d = typeInfo[TYPES.valueOf(attackerType.toUpperCase().trim()).ordinal()]
 								[TYPES.valueOf(defenderType1.toUpperCase().trim()).ordinal()]

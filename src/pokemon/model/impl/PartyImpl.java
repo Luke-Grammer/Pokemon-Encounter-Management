@@ -13,17 +13,16 @@ import pokemon.model.Pokemon;
  * 
  * @author Luke Grammer
  */
-public class PartyImpl implements Party, Serializable
-{
+public class PartyImpl implements Party, Serializable {
 	private static final long serialVersionUID = -1294062834999445010L;
-	
+
 	private Collection<Pokemon> party;
 
 	public PartyImpl()
 	{
 		party = new ArrayList<Pokemon>();
 	}
-	
+
 	/**
 	 * Constructor for Party given an ArrayList of pokemon
 	 * 
@@ -33,7 +32,7 @@ public class PartyImpl implements Party, Serializable
 	{
 		if (party.size() > 6)
 			throw new PartyOverflowException();
-		
+
 		this.party = party;
 	}
 
@@ -46,9 +45,34 @@ public class PartyImpl implements Party, Serializable
 	{
 		return party;
 	}
-	
+
 	public int size()
 	{
 		return party.size();
+	}
+
+	public String toString()
+	{
+		String returnString = "";
+		int partyMemberIndex = 1;
+		if (party.size() == 0)
+		{
+			return "Your current party is empty!";
+		} else
+		{
+			returnString += "Current party:\n";
+			for (Pokemon p : party)
+			{
+				returnString += "\t" + partyMemberIndex + ") " + p + "\n";
+				partyMemberIndex++;
+			}
+		}
+		while (partyMemberIndex <= 6)
+		{
+			returnString += "\n";
+			partyMemberIndex++;
+		}
+		
+		return returnString;
 	}
 }
